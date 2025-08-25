@@ -1,9 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace RestAPIDemo.Controllers
 {
     /// <summary>
-    /// Controller for providing weather forecast data.
+    /// Controller for providing weather forecast data and string utilities.
     /// </summary>
     [ApiController]
     [Route("[controller]")]
@@ -45,6 +46,27 @@ namespace RestAPIDemo.Controllers
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+
+        /// <summary>
+        /// Reverses the input string.
+        /// </summary>
+        /// <param name="input">The string to reverse.</param>
+        /// <returns>The reversed string.</returns>
+        /// <remarks>
+        /// Requires authentication via a valid authentication header.
+        /// </remarks>
+        [Authorize]
+        [HttpPost("ReverseString")]
+        public ActionResult<string> ReverseString([FromBody] string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return BadRequest("Input string cannot be null or empty.");
+            }
+
+            var reversed = new string(input.Reverse().ToArray());
+            return Ok(reversed);
         }
     }
 }
